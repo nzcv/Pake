@@ -194,8 +194,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDownloadRequired = (url, anchorElement, e) => anchorElement.download || e.metaKey || e.ctrlKey || isDownloadLink(url);
 
   const handleExternalLink = (e, url) => {
-    // e.preventDefault();
+    console.error(`${url}`)
+    e.preventDefault();
     // e.stopImmediatePropagation();
+    // e.stopPropagation();
+    tauri.shell.open(url);
+  };
+
+  
+  const handleExternalLink2 = (e, url) => {
+    console.error(`${url}`);
+    if(url.includes('#')) {
+      //internal link
+    } else {
+      e.stopPropagation();
+    }
+  };
+
+  const handleExternalLink3 = (e, url) => {
+    console.log(`Link3: ${e}`);
+    e.preventDefault();
+    e.stopImmediatePropagation();
     e.stopPropagation();
     // tauri.shell.open(url);
   };
@@ -208,19 +227,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const detectAnchorElementClick = e => {
     const anchorElement = e.target.closest('a');
     if (anchorElement && anchorElement.href) {
-      anchorElement.target = '_self';
+      // anchorElement.target = '_self';
       const hrefUrl = new URL(anchorElement.href);
       const absoluteUrl = hrefUrl.href;
       let filename = anchorElement.download || getFilenameFromUrl(absoluteUrl);
 
       // Handling external link redirection.
       if (isExternalLink(absoluteUrl) && (['_blank', '_new'].includes(anchorElement.target) || externalTargetLink())) {
-        //window.pakeToast("handleExternalLink");
+        window.pakeToast("handleExternalLink");
         handleExternalLink(e, absoluteUrl);
         return;
       } else {
-        //window.pakeToast(`handleExternalLink2`);
-        handleExternalLink(e, absoluteUrl);
+        console.log(anchorElement.href);
+        handleExternalLink2(e, absoluteUrl);
         return;
       }
 
@@ -228,6 +247,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isDownloadRequired(absoluteUrl, anchorElement, e) && !externalDownLoadLink() && !isSpecialDownload(absoluteUrl)) {
         handleDownloadLink(e, absoluteUrl, filename);
       }
+    } else {
+      // console.error(`${e.target.innerText}`);
+      // if(e.stopPropagation && e.target.innerText.includes("空白")) {
+      //   console.error(`preventDefault: ${e.target.innerText}`);
+      //   e.stopImmediatePropagation();
+      // }
+      //handleExternalLink3(e, absoluteUrl);
     }
   };
 

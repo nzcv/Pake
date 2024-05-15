@@ -26,6 +26,12 @@
       "fs": {
         "all": true,
         "scope": ["$DOWNLOAD/*"]
+      },
+      "shell": {
+        "all": true,
+        "execute": true,
+        "sidecar": true,
+        "open": true
       }
     }
   },

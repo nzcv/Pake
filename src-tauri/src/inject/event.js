@@ -194,8 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDownloadRequired = (url, anchorElement, e) => anchorElement.download || e.metaKey || e.ctrlKey || isDownloadLink(url);
 
   const handleExternalLink = (e, url) => {
-    e.preventDefault();
-    tauri.shell.open(url);
+    // e.preventDefault();
+    // e.stopImmediatePropagation();
+    e.stopPropagation();
+    // tauri.shell.open(url);
   };
 
   const handleDownloadLink = (e, url, filename) => {
@@ -213,6 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Handling external link redirection.
       if (isExternalLink(absoluteUrl) && (['_blank', '_new'].includes(anchorElement.target) || externalTargetLink())) {
+        //window.pakeToast("handleExternalLink");
+        handleExternalLink(e, absoluteUrl);
+        return;
+      } else {
+        //window.pakeToast(`handleExternalLink2`);
         handleExternalLink(e, absoluteUrl);
         return;
       }

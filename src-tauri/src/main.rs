@@ -5,9 +5,9 @@
 
 mod app;
 mod util;
-
 use app::{invoke, menu, window};
-use invoke::{download_file, download_file_by_binary};
+use std::{fs::File, io::Write};
+use invoke::{download_file, download_file_by_binary, open};
 use menu::{get_system_tray, system_tray_handle};
 use tauri::{GlobalShortcutManager, Manager};
 use tauri_plugin_window_state::Builder as windowStatePlugin;
@@ -37,11 +37,13 @@ pub fn run_app() {
         .plugin(tauri_plugin_oauth::init())
         .invoke_handler(tauri::generate_handler![
             download_file,
-            download_file_by_binary
+            download_file_by_binary,
+            open
         ])
         .setup(move |app| {
             let _window = get_window(app, pake_config, data_dir);
             // Prevent initial shaking
+            // _window.open_devtools();
             _window.show().unwrap();
 
             if !activation_shortcut.is_empty() {
@@ -62,8 +64,8 @@ pub fn run_app() {
             }
 
             Ok(())
-        })
-        .on_window_event(|event| {
+        })        
+        .on_window_event(|event| {            
             if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
                 #[cfg(target_os = "macos")]
                 {
@@ -80,7 +82,20 @@ pub fn run_app() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+pub fn init_debug_logger() {
+    let log_file = tauri::api::path::data_dir().unwrap().join("feidoc.log.txt");
+    let target = Box::new(File::create(log_file).expect("Can't create file"));
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug"))
+        .target(env_logger::Target::Pipe(target))
+        .format(|buf, record| {
+            let file_line = format!("{}:{}", record.file().unwrap(), record.line().unwrap());
 
+            writeln!(buf, "{:22} [{:05}] - {}", file_line, record.level(), record.args())
+        })
+        .init();
+    log::info!("init_debug_logger");
+}
 fn main() {
+    init_debug_logger();
     run_app()
 }

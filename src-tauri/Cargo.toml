@@ -20,6 +20,8 @@ serde = { version = "1.0.200", features = ["derive"] }
 tauri = { version = "1.6.3", features = ["api-all", "system-tray"] }
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-oauth = { git = "https://github.com/FabianLars/tauri-plugin-oauth", branch = "main" }
+env_logger = "0.11.3"
+log = "0.4.21"
 
 [dev-dependencies]
 cargo-bloat = "0.11.1"

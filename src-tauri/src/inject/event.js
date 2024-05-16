@@ -194,16 +194,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDownloadRequired = (url, anchorElement, e) => anchorElement.download || e.metaKey || e.ctrlKey || isDownloadLink(url);
 
   const handleExternalLink = (e, url) => {
-    console.error(`${url}`)
+    console.error(`Link: ${url}`)
+    invoke('open', { params: { url } });
     e.preventDefault();
-    // e.stopImmediatePropagation();
-    // e.stopPropagation();
-    tauri.shell.open(url);
+    e.stopImmediatePropagation();
+    e.stopPropagation();    
+    // tauri.shell.open(url);
   };
 
   
   const handleExternalLink2 = (e, url) => {
-    console.error(`${url}`);
+    console.error(`Link2: ${url}`);
     if(url.includes('#')) {
       //internal link
     } else {

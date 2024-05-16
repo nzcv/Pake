@@ -1,6 +1,7 @@
 use crate::util::{check_file_or_append, get_download_message, show_toast, MessageType};
 use std::fs::{self, File};
 use std::io::Write;
+use std::process::Command;
 use tauri::api::http::{ClientBuilder, HttpRequestBuilder, ResponseType};
 use tauri::{api, command, AppHandle, Manager, Window};
 
@@ -14,6 +15,11 @@ pub struct DownloadFileParams {
 pub struct BinaryDownloadParams {
     filename: String,
     binary: Vec<u8>,
+}
+
+#[derive(serde::Deserialize)]
+pub struct OpenParams {
+    url: String,
 }
 
 #[command]
@@ -69,4 +75,21 @@ pub async fn download_file_by_binary(
             Err(e.to_string())
         }
     }
+}
+
+#[command]
+pub async fn open(app: AppHandle, params: OpenParams) -> Result<(), String> {
+    log::info!("{}", params.url);
+    if cfg!(windows) {
+        Command::new("explorer").arg(params.url)
+        .output()
+        .expect("Failed to execute command");
+    } else {
+        Command::new("open").arg(params.url)
+        .output()
+        .expect("Failed to execute command");
+    }
+    // let window: Window = app.get_window("pake").unwrap();
+    // show_toast(&window, &params.url);
+    Ok(())
 }

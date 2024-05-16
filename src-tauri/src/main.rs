@@ -7,7 +7,7 @@ mod app;
 mod util;
 use app::{invoke, menu, window};
 use std::{fs::File, io::Write};
-use invoke::{download_file, download_file_by_binary, open};
+use invoke::{download_file, download_file_by_binary, open_link};
 use menu::{get_system_tray, system_tray_handle};
 use tauri::{GlobalShortcutManager, Manager};
 use tauri_plugin_window_state::Builder as windowStatePlugin;
@@ -38,7 +38,7 @@ pub fn run_app() {
         .invoke_handler(tauri::generate_handler![
             download_file,
             download_file_by_binary,
-            open
+            open_link
         ])
         .setup(move |app| {
             let _window = get_window(app, pake_config, data_dir);
@@ -83,7 +83,7 @@ pub fn run_app() {
         .expect("error while running tauri application");
 }
 pub fn init_debug_logger() {
-    let log_file = tauri::api::path::data_dir().unwrap().join("feidoc.log.txt");
+    let log_file = tauri::api::path::local_data_dir().unwrap().join("feidoc.log.txt");
     let target = Box::new(File::create(log_file).expect("Can't create file"));
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug"))
         .target(env_logger::Target::Pipe(target))

@@ -193,13 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isDownloadRequired = (url, anchorElement, e) => anchorElement.download || e.metaKey || e.ctrlKey || isDownloadLink(url);
 
-  const handleExternalLink = (e, url) => {
+  const handleExternalLink = async (e, url) => {
     console.error(`Link: ${url}`)
-    invoke('open', { params: { url } });
-    e.preventDefault();
-    e.stopImmediatePropagation();
+    //e.preventDefault();
+    //e.stopImmediatePropagation();
     e.stopPropagation();    
-    // tauri.shell.open(url);
+    tauri.shell.open(url);
+    await invoke('open_link', { params: { url } });
   };
 
   
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     invoke('download_file', { params: { url, filename } });
   };
 
-  const detectAnchorElementClick = e => {
+  const detectAnchorElementClick = async e => {
     const anchorElement = e.target.closest('a');
     if (anchorElement && anchorElement.href) {
       // anchorElement.target = '_self';
@@ -236,10 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handling external link redirection.
       if (isExternalLink(absoluteUrl) && (['_blank', '_new'].includes(anchorElement.target) || externalTargetLink())) {
         window.pakeToast("handleExternalLink");
-        handleExternalLink(e, absoluteUrl);
+        await handleExternalLink(e, absoluteUrl);
         return;
       } else {
         console.log(anchorElement.href);
+        window.pakeToast("handleExternalLink2");
         handleExternalLink2(e, absoluteUrl);
         return;
       }

@@ -78,10 +78,10 @@ pub async fn download_file_by_binary(
 }
 
 #[command]
-pub async fn open(app: AppHandle, params: OpenParams) -> Result<(), String> {
+pub async fn open_link(_: AppHandle, params: OpenParams) -> Result<(), String> {
     log::info!("{}", params.url);
     if cfg!(windows) {
-        Command::new("explorer").arg(params.url)
+        Command::new("start").arg(params.url)
         .output()
         .expect("Failed to execute command");
     } else {

@@ -83,7 +83,7 @@ pub fn run_app() {
         .expect("error while running tauri application");
 }
 pub fn init_debug_logger() {
-    let log_file = tauri::api::path::local_data_dir().unwrap().join("feidoc.log.txt");
+    let log_file = tauri::api::path::data_dir().unwrap().join("feidoc.log.txt");
     let target = Box::new(File::create(log_file).expect("Can't create file"));
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug"))
         .target(env_logger::Target::Pipe(target))
